@@ -1,8 +1,11 @@
-import os
-from dotenv import load_dotenv
+from pymongo import MongoClient
 
-load_dotenv()
+from app.config import Config
 
-class Config:
-    MONGO_URI = os.getenv("MONGO_URI")
-    DATABASE_NAME = os.getenv("DATABASE_NAME")
+
+client = MongoClient(Config.MONGO_URI)
+db = client[Config.DATABASE_NAME]
+
+
+def get_collection(collection_name):
+    return db[collection_name]
