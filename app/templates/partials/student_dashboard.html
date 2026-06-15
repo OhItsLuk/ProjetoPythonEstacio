@@ -1,0 +1,81 @@
+<section class="grid two-columns">
+    <div class="panel">
+        <h3>Inscrever-se em aula</h3>
+        <form method="post" action="{{ url_for('dashboard.enroll_student') }}">
+            <label>Aluno
+                <select name="student_id" required>
+                    {% for student in students %}
+                    <option value="{{ student.id }}">{{ student.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>Aula
+                <select name="class_id" required>
+                    {% for class_model in classes %}
+                    <option value="{{ class_model.id }}">{{ class_model.service_name }} - {{ class_model.day_of_week or class_model.schedule_notes }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <button type="submit">Inscrever</button>
+        </form>
+    </div>
+
+    <div class="panel">
+        <h3>Realizar pagamento</h3>
+        <form method="post" action="{{ url_for('dashboard.create_student_payment') }}">
+            <label>Aluno
+                <select name="student_id" required>
+                    {% for student in students %}
+                    <option value="{{ student.id }}">{{ student.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>Servico
+                <select name="service_id" required>
+                    {% for service in services %}
+                    <option value="{{ service.id }}">{{ service.name }} - R$ {{ "%.2f"|format(service.monthly_price or 0) }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>Mes de referencia <input type="month" name="reference_month" required></label>
+            <label>Valor <input type="number" step="0.01" name="amount" placeholder="Usa o valor da aula se vazio"></label>
+            <label>ID da inscricao <input name="enrollment_id" placeholder="Opcional"></label>
+            <button type="submit">Pagar</button>
+        </form>
+    </div>
+</section>
+
+<section class="panel">
+    <h3>Aulas disponiveis</h3>
+    <div class="cards">
+        {% for class_model in classes %}
+        <article class="class-card">
+            <strong>{{ class_model.service_name }}</strong>
+            <span>{{ class_model.day_of_week or class_model.schedule_notes }}</span>
+            <span>{{ class_model.start_time or "" }} {{ class_model.end_time or "" }}</span>
+            <span>R$ {{ "%.2f"|format(class_model.service_price or 0) }}</span>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="panel">
+    <h3>Inscricoes</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>Aluno</th><th>Aula</th><th>Horario</th><th>Pagamento</th></tr>
+            </thead>
+            <tbody>
+                {% for enrollment in enrollments %}
+                <tr>
+                    <td>{{ enrollment.student_name }}</td>
+                    <td>{{ enrollment.service_name }}</td>
+                    <td>{{ enrollment.class_schedule }}</td>
+                    <td><span class="status">{{ enrollment.payment_status }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>

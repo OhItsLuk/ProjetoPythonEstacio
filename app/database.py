@@ -3,7 +3,7 @@ from pymongo import MongoClient
 from app.config import Config
 
 
-client = MongoClient(Config.MONGO_URI)
+client = MongoClient(Config.MONGO_URI, serverSelectionTimeoutMS=2000)
 db = client[Config.DATABASE_NAME]
 
 

@@ -12,5 +12,8 @@ class ProfessionalRepository(BaseRepository):
     def find_by_name(self, name: str) -> list[dict]:
         return self.find_by_field("name", name)
 
+    def find_by_email(self, email: str) -> list[dict]:
+        return self.find_by_field("email", email)
+
     def find_by_specialty(self, specialty: str) -> list[dict]:
         return self.find_by_field("specialty", specialty)

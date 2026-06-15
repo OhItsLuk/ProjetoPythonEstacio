@@ -29,6 +29,16 @@ class BaseRepository:
             for document in self.collection.find({field_name: value})
         ]
 
+    def update_by_id(self, document_id: str, data: dict[str, Any]) -> bool:
+        if not ObjectId.is_valid(document_id):
+            return False
+
+        result = self.collection.update_one(
+            {"_id": ObjectId(document_id)},
+            {"$set": data},
+        )
+        return result.modified_count > 0
+
     def _serialize(self, document: dict[str, Any]) -> dict[str, Any]:
         document["id"] = str(document.pop("_id"))
         return document

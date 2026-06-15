@@ -1,0 +1,285 @@
+:root {
+    --bg: #f4f6f8;
+    --panel: #ffffff;
+    --text: #1b2733;
+    --muted: #667085;
+    --line: #d9e0e7;
+    --green: #0f8f55;
+    --blue: #1877b9;
+    --pink: #c30a7d;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.sidebar {
+    min-height: 100vh;
+    padding: 28px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    background: #10251b;
+    color: #ffffff;
+}
+
+.sidebar h1 {
+    margin: 4px 0 0;
+    font-size: 24px;
+    line-height: 1.1;
+}
+
+.eyebrow {
+    margin: 0;
+    color: #8ed8b1;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+nav {
+    display: grid;
+    gap: 8px;
+}
+
+nav a {
+    padding: 12px 14px;
+    border-radius: 6px;
+    color: #d8efe3;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+nav a.active,
+nav a:hover {
+    background: #1f7049;
+    color: #ffffff;
+}
+
+main {
+    padding: 28px;
+    overflow-x: hidden;
+}
+
+.topbar {
+    margin-bottom: 24px;
+}
+
+.topbar h2 {
+    margin: 6px 0 0;
+    font-size: 28px;
+}
+
+.stats-grid,
+.grid,
+.cards {
+    display: grid;
+    gap: 16px;
+}
+
+.stats-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-bottom: 16px;
+}
+
+.two-columns {
+    grid-template-columns: minmax(320px, 420px) 1fr;
+    margin-bottom: 16px;
+}
+
+.panel,
+.stat {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel);
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+}
+
+.panel {
+    padding: 18px;
+    margin-bottom: 16px;
+}
+
+.panel h3 {
+    margin: 0 0 16px;
+    font-size: 18px;
+}
+
+.alert {
+    margin-bottom: 16px;
+    padding: 12px 14px;
+    border: 1px solid #f2c94c;
+    border-radius: 8px;
+    background: #fff8df;
+    color: #6f5200;
+    font-weight: 700;
+}
+
+.stat {
+    padding: 18px;
+}
+
+.stat span,
+.list-item span,
+.class-card span {
+    display: block;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.stat strong {
+    display: block;
+    margin-top: 8px;
+    font-size: 26px;
+}
+
+form {
+    display: grid;
+    gap: 12px;
+}
+
+label {
+    display: grid;
+    gap: 6px;
+    color: #344054;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+input,
+select,
+textarea,
+button {
+    width: 100%;
+    min-height: 40px;
+    border-radius: 6px;
+    font: inherit;
+}
+
+input,
+select,
+textarea {
+    border: 1px solid #c9d3df;
+    padding: 9px 10px;
+    background: #ffffff;
+}
+
+textarea {
+    min-height: 82px;
+    resize: vertical;
+}
+
+button {
+    border: 0;
+    padding: 10px 14px;
+    background: var(--green);
+    color: #ffffff;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+button:hover {
+    background: #0b7444;
+}
+
+.checkbox {
+    grid-template-columns: 18px 1fr;
+    align-items: center;
+}
+
+.checkbox input {
+    min-height: 18px;
+}
+
+.form-row,
+.inline-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.inline-form {
+    grid-template-columns: minmax(120px, 1fr) 80px;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 12px 10px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+}
+
+th {
+    color: var(--muted);
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.status {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #e9f6ef;
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.list,
+.cards {
+    display: grid;
+    gap: 10px;
+}
+
+.list-item,
+.class-card {
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+}
+
+.cards {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+
+.class-card {
+    display: grid;
+    gap: 6px;
+    border-top: 4px solid var(--blue);
+}
+
+@media (max-width: 900px) {
+    body {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        min-height: auto;
+    }
+
+    .stats-grid,
+    .two-columns {
+        grid-template-columns: 1fr;
+    }
+}

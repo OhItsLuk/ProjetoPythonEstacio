@@ -1,0 +1,90 @@
+<section class="stats-grid">
+    <article class="stat">
+        <span>Recebido</span>
+        <strong>R$ {{ "%.2f"|format(financial_summary.total_paid) }}</strong>
+    </article>
+    <article class="stat">
+        <span>Pendente</span>
+        <strong>R$ {{ "%.2f"|format(financial_summary.total_pending) }}</strong>
+    </article>
+    <article class="stat">
+        <span>Pagamentos</span>
+        <strong>{{ financial_summary.payment_count }}</strong>
+    </article>
+    <article class="stat">
+        <span>Usuarios</span>
+        <strong>{{ users|length }}</strong>
+    </article>
+</section>
+
+<section class="grid two-columns">
+    <div class="panel">
+        <h3>Criar usuario</h3>
+        <form method="post" action="{{ url_for('dashboard.create_user_from_dashboard') }}">
+            <label>Nome <input name="name" required></label>
+            <label>E-mail <input type="email" name="email" required></label>
+            <label>Senha <input type="password" name="password" required></label>
+            <label>Role
+                <select name="role" required>
+                    <option value="admin">Administrador</option>
+                    <option value="professor">Professor</option>
+                    <option value="aluno">Aluno</option>
+                </select>
+            </label>
+            <label>ID relacionado <input name="related_id" placeholder="Aluno/professor vinculado"></label>
+            <button type="submit">Criar usuario</button>
+        </form>
+    </div>
+
+    <div class="panel">
+        <h3>Usuarios e roles</h3>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr><th>Nome</th><th>E-mail</th><th>Role</th><th>Alterar</th></tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.role }}</td>
+                        <td>
+                            <form class="inline-form" method="post" action="{{ url_for('dashboard.update_user_role_from_dashboard', user_id=user.id) }}">
+                                <select name="role">
+                                    <option value="admin" {{ "selected" if user.role == "admin" else "" }}>Admin</option>
+                                    <option value="professor" {{ "selected" if user.role == "professor" else "" }}>Professor</option>
+                                    <option value="aluno" {{ "selected" if user.role == "aluno" else "" }}>Aluno</option>
+                                </select>
+                                <button type="submit">Salvar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section class="panel">
+    <h3>Pagamentos</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>Aluno</th><th>Servico</th><th>Mes</th><th>Status</th><th>Valor</th></tr>
+            </thead>
+            <tbody>
+                {% for payment in payments %}
+                <tr>
+                    <td>{{ payment.student_name }}</td>
+                    <td>{{ payment.service_name }}</td>
+                    <td>{{ payment.reference_month }}</td>
+                    <td><span class="status">{{ payment.status }}</span></td>
+                    <td>R$ {{ "%.2f"|format(payment.amount or 0) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>

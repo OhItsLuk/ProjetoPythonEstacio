@@ -1,0 +1,59 @@
+<section class="grid two-columns">
+    <div class="panel">
+        <h3>Criar materia ou servico</h3>
+        <form method="post" action="{{ url_for('dashboard.create_professor_service') }}">
+            <label>Nome <input name="name" required></label>
+            <label>Categoria <input name="category" required placeholder="Cultura e artes"></label>
+            <label>Tipo
+                <select name="service_type">
+                    <option value="aula">Aula</option>
+                    <option value="curso">Curso</option>
+                    <option value="servico">Servico</option>
+                </select>
+            </label>
+            <label>Valor mensal <input type="number" step="0.01" name="monthly_price"></label>
+            <label class="checkbox"><input type="checkbox" name="is_free"> Gratuito</label>
+            <label>Dia <input name="day_of_week" placeholder="Segunda"></label>
+            <div class="form-row">
+                <label>Inicio <input type="time" name="start_time"></label>
+                <label>Fim <input type="time" name="end_time"></label>
+            </div>
+            <label>Observacoes de horario <input name="schedule_notes"></label>
+            <label>Observacoes <textarea name="notes"></textarea></label>
+            <button type="submit">Criar</button>
+        </form>
+    </div>
+
+    <div class="panel">
+        <h3>Materias cadastradas</h3>
+        <div class="list">
+            {% for service in services %}
+            <article class="list-item">
+                <strong>{{ service.name }}</strong>
+                <span>{{ service.category }} · {{ service.service_type }} · R$ {{ "%.2f"|format(service.monthly_price or 0) }}</span>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="panel">
+    <h3>Aulas e horarios</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>Materia</th><th>Dia</th><th>Horario</th><th>Observacao</th></tr>
+            </thead>
+            <tbody>
+                {% for class_model in classes %}
+                <tr>
+                    <td>{{ class_model.service_name }}</td>
+                    <td>{{ class_model.day_of_week or "-" }}</td>
+                    <td>{{ class_model.start_time or "-" }} ate {{ class_model.end_time or "-" }}</td>
+                    <td>{{ class_model.schedule_notes or "-" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>

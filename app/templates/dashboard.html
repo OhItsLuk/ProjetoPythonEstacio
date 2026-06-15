@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard ONG</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+    <aside class="sidebar">
+        <div>
+            <p class="eyebrow">Associacao Cultural</p>
+            <h1>Odette Vidal Cardoso</h1>
+        </div>
+        <nav>
+            <a class="{{ 'active' if role == 'admin' else '' }}" href="{{ url_for('dashboard.dashboard', role='admin') }}">Admin</a>
+            <a class="{{ 'active' if role == 'professor' else '' }}" href="{{ url_for('dashboard.dashboard', role='professor') }}">Professor</a>
+            <a class="{{ 'active' if role == 'aluno' else '' }}" href="{{ url_for('dashboard.dashboard', role='aluno') }}">Aluno</a>
+        </nav>
+    </aside>
+
+    <main>
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">Painel {{ role }}</p>
+                <h2>Gestao de aulas, usuarios e pagamentos</h2>
+            </div>
+        </header>
+
+        {% if db_error %}
+        <section class="alert">
+            MongoDB indisponivel. Inicie o banco configurado em MONGO_URI para carregar e gravar dados.
+        </section>
+        {% endif %}
+
+        {% if role == "admin" %}
+            {% include "partials/admin_dashboard.html" %}
+        {% elif role == "professor" %}
+            {% include "partials/professor_dashboard.html" %}
+        {% else %}
+            {% include "partials/student_dashboard.html" %}
+        {% endif %}
+    </main>
+</body>
+</html>
