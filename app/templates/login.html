@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login - Dashboard ONG</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body class="login-page">
+    <main class="login-shell">
+        <section class="login-brand">
+            <p class="eyebrow">Associacao Cultural</p>
+            <h1>Odette Vidal Cardoso</h1>
+            <p>Portal administrativo para financeiro, materias, inscricoes e mensalidades.</p>
+        </section>
+
+        <section class="login-card">
+            <h2>Entrar</h2>
+            {% if error %}
+            <div class="alert">{{ error }}</div>
+            {% endif %}
+            <form method="post" action="{{ url_for('dashboard.authenticate') }}">
+                <label>E-mail <input type="email" name="email" value="admin@ong.local" required></label>
+                <label>Senha <input type="password" name="password" value="admin123" required></label>
+                <button type="submit">Entrar</button>
+            </form>
+
+            <div class="mock-logins">
+                <p>Acessos mockados</p>
+                <a href="{{ url_for('dashboard.mock_login', role='admin') }}">Admin financeiro</a>
+                <a href="{{ url_for('dashboard.mock_login', role='professor') }}">Professor</a>
+                <a href="{{ url_for('dashboard.mock_login', role='aluno') }}">Aluno</a>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

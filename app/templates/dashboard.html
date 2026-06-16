@@ -12,10 +12,14 @@
             <p class="eyebrow">Associacao Cultural</p>
             <h1>Odette Vidal Cardoso</h1>
         </div>
+        <section class="user-panel">
+            <span>{{ current_user.name }}</span>
+            <strong>{{ role }}</strong>
+            <small>{{ current_user.email }}</small>
+        </section>
         <nav>
-            <a class="{{ 'active' if role == 'admin' else '' }}" href="{{ url_for('dashboard.dashboard', role='admin') }}">Admin</a>
-            <a class="{{ 'active' if role == 'professor' else '' }}" href="{{ url_for('dashboard.dashboard', role='professor') }}">Professor</a>
-            <a class="{{ 'active' if role == 'aluno' else '' }}" href="{{ url_for('dashboard.dashboard', role='aluno') }}">Aluno</a>
+            <a class="active" href="{{ url_for('dashboard.dashboard') }}">Painel</a>
+            <a href="{{ url_for('dashboard.logout') }}">Sair</a>
         </nav>
     </aside>
 

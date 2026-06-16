@@ -23,6 +23,92 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
+.login-page {
+    display: grid;
+    grid-template-columns: 1fr;
+    place-items: center;
+    padding: 24px;
+    background:
+        linear-gradient(135deg, rgba(15, 143, 85, 0.12), rgba(24, 119, 185, 0.08)),
+        var(--bg);
+}
+
+.login-shell {
+    width: min(980px, 100%);
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 24px;
+    padding: 0;
+}
+
+.login-brand,
+.login-card {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel);
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+}
+
+.login-brand {
+    padding: 36px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.login-brand h1 {
+    margin: 8px 0 14px;
+    font-size: 42px;
+    line-height: 1.05;
+}
+
+.login-brand p:last-child {
+    max-width: 460px;
+    margin: 0;
+    color: var(--muted);
+    font-size: 18px;
+    line-height: 1.45;
+}
+
+.login-card {
+    padding: 28px;
+}
+
+.login-card h2 {
+    margin: 0 0 18px;
+    font-size: 26px;
+}
+
+.mock-logins {
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    gap: 8px;
+}
+
+.mock-logins p {
+    margin: 0 0 4px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.mock-logins a {
+    display: block;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.mock-logins a:hover {
+    border-color: var(--green);
+    color: var(--green);
+}
+
 .sidebar {
     min-height: 100vh;
     padding: 28px 20px;
@@ -31,6 +117,35 @@ body {
     gap: 32px;
     background: #10251b;
     color: #ffffff;
+}
+
+.user-panel {
+    padding: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.user-panel span,
+.user-panel strong,
+.user-panel small {
+    display: block;
+}
+
+.user-panel span {
+    font-weight: 700;
+}
+
+.user-panel strong {
+    margin-top: 6px;
+    color: #8ed8b1;
+    text-transform: capitalize;
+}
+
+.user-panel small {
+    margin-top: 6px;
+    color: #d8efe3;
+    overflow-wrap: anywhere;
 }
 
 .sidebar h1 {
@@ -276,6 +391,10 @@ th {
 
     .sidebar {
         min-height: auto;
+    }
+
+    .login-shell {
+        grid-template-columns: 1fr;
     }
 
     .stats-grid,

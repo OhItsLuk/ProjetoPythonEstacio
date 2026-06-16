@@ -1,7 +1,8 @@
 from datetime import datetime
 
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, redirect, render_template, request, session, url_for
 from pymongo.errors import PyMongoError
+from werkzeug.security import check_password_hash
 
 from app.models import ClassModel, EnrollmentModel, PaymentModel, ServiceModel, UserModel
 from app.repositories import (
@@ -28,8 +29,12 @@ professional_repository = ProfessionalRepository()
 
 @dashboard_bp.get("/dashboard")
 def dashboard():
-    role = request.args.get("role", "admin")
-    user_id = request.args.get("user_id")
+    current_user = session.get("user")
+    if not current_user:
+        return redirect(url_for("dashboard.login"))
+
+    role = current_user["role"]
+    user_id = current_user.get("related_id")
 
     db_error = None
 
@@ -71,6 +76,7 @@ def dashboard():
         "dashboard.html",
         role=role,
         user_id=user_id,
+        current_user=current_user,
         services=services,
         classes=classes,
         payments=payments,
@@ -83,8 +89,48 @@ def dashboard():
     )
 
 
+@dashboard_bp.get("/login")
+def login():
+    if session.get("user"):
+        return redirect(url_for("dashboard.dashboard"))
+
+    return render_template("login.html", error=None)
+
+
+@dashboard_bp.post("/login")
+def authenticate():
+    email = request.form["email"]
+    password = request.form["password"]
+    user = _authenticate_user(email, password)
+
+    if not user:
+        return render_template("login.html", error="E-mail ou senha invalidos."), 401
+
+    _login_user(user)
+    return redirect(url_for("dashboard.dashboard"))
+
+
+@dashboard_bp.get("/login/mock/<role>")
+def mock_login(role):
+    user = _mock_user_by_role(role)
+    if not user:
+        return redirect(url_for("dashboard.login"))
+
+    _login_user(user)
+    return redirect(url_for("dashboard.dashboard"))
+
+
+@dashboard_bp.get("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("dashboard.login"))
+
+
 @dashboard_bp.post("/dashboard/admin/users")
 def create_user_from_dashboard():
+    if not _has_role("admin"):
+        return redirect(url_for("dashboard.dashboard"))
+
     user = UserModel(
         name=request.form["name"],
         email=request.form["email"],
@@ -93,17 +139,23 @@ def create_user_from_dashboard():
         related_id=request.form.get("related_id") or None,
     )
     user_repository.insert_user(user)
-    return redirect(url_for("dashboard.dashboard", role="admin"))
+    return redirect(url_for("dashboard.dashboard"))
 
 
 @dashboard_bp.post("/dashboard/admin/users/<user_id>/role")
 def update_user_role_from_dashboard(user_id):
+    if not _has_role("admin"):
+        return redirect(url_for("dashboard.dashboard"))
+
     user_repository.update_role(user_id, request.form["role"])
-    return redirect(url_for("dashboard.dashboard", role="admin"))
+    return redirect(url_for("dashboard.dashboard"))
 
 
 @dashboard_bp.post("/dashboard/professor/services")
 def create_professor_service():
+    if not _has_role("professor"):
+        return redirect(url_for("dashboard.dashboard"))
+
     service = ServiceModel(
         name=request.form["name"],
         category=request.form["category"],
@@ -126,14 +178,17 @@ def create_professor_service():
             )
         )
 
-    return redirect(url_for("dashboard.dashboard", role="professor"))
+    return redirect(url_for("dashboard.dashboard"))
 
 
 @dashboard_bp.post("/dashboard/aluno/enrollments")
 def enroll_student():
+    if not _has_role("aluno"):
+        return redirect(url_for("dashboard.dashboard"))
+
     class_model = class_repository.find_by_id(request.form["class_id"])
     if not class_model:
-        return redirect(url_for("dashboard.dashboard", role="aluno"))
+        return redirect(url_for("dashboard.dashboard"))
 
     enrollment = EnrollmentModel(
         student_id=request.form["student_id"],
@@ -141,11 +196,14 @@ def enroll_student():
         service_id=class_model["service_id"],
     )
     enrollment_repository.insert_enrollment(enrollment)
-    return redirect(url_for("dashboard.dashboard", role="aluno"))
+    return redirect(url_for("dashboard.dashboard"))
 
 
 @dashboard_bp.post("/dashboard/aluno/payments")
 def create_student_payment():
+    if not _has_role("aluno"):
+        return redirect(url_for("dashboard.dashboard"))
+
     service = service_repository.find_by_id(request.form["service_id"])
     amount = _optional_float(request.form.get("amount"))
 
@@ -166,7 +224,51 @@ def create_student_payment():
     if enrollment_id:
         enrollment_repository.mark_as_paid(enrollment_id)
 
-    return redirect(url_for("dashboard.dashboard", role="aluno"))
+    return redirect(url_for("dashboard.dashboard"))
+
+
+def _authenticate_user(email, password):
+    try:
+        users = user_repository.find_by_email(email)
+        if users and check_password_hash(users[0].get("password_hash", ""), password):
+            return users[0]
+    except PyMongoError:
+        pass
+
+    from seed import users_data, build_dashboard_preview_data
+
+    preview_users = build_dashboard_preview_data()["users"]
+    preview_by_email = {user["email"]: user for user in preview_users}
+
+    for user_data in users_data:
+        if user_data["email"] == email and user_data["password"] == password:
+            return preview_by_email[email]
+
+    return None
+
+
+def _mock_user_by_role(role):
+    from seed import build_dashboard_preview_data
+
+    for user in build_dashboard_preview_data()["users"]:
+        if user["role"] == role:
+            return user
+
+    return None
+
+
+def _login_user(user):
+    session["user"] = {
+        "id": user["id"],
+        "name": user["name"],
+        "email": user["email"],
+        "role": user["role"],
+        "related_id": user.get("related_id"),
+    }
+
+
+def _has_role(role):
+    return session.get("user", {}).get("role") == role
 
 
 def _classes_with_service_names(classes, services):
